@@ -1,0 +1,19 @@
+{
+  "name": "peekaboo.js",
+  "description": "Do something with everything when it's in viewport.",
+  "version": "1.0.0",
+  "main": "peekaboo.js",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enoks/peekaboo.js"
+  },
+  "bugs": {
+    "url": "https://github.com/enoks/peekaboo.js/issues"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0"
+  }
+}
