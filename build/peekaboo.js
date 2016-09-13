@@ -1,5 +1,5 @@
 /**
- * peekaboo.js v1.0.0
+ * peekaboo v1.0.1
  * https://github.com/enoks/peekaboo.js
  *
  * Copyright 2016, Stefan Käsche
@@ -105,16 +105,8 @@
                 // collect window's and element's top and bottom
                 var wt = window.pageYOffset,
                     wb = wt + (Math.max(document.documentElement.clientHeight, window.innerHeight || 0)),
-                    et = $element.offsetTop,
-
-                    parent = $element; // parent at least from next step on ;)
-
-                // get absolute offset top
-                while (parent = parent.offsetParent) {
-                    et += parent.offsetTop;
-                }
-
-                var eb = et + $element.clientHeight;
+                    et = $element.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop,
+                    eb = et + $element.clientHeight;
 
                 // check if element is in viewport
                 if (eb >= wt - oOptions.threshold && et <= wb + oOptions.threshold) {

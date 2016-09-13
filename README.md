@@ -3,7 +3,7 @@
 Do something with _everything_ when it's in viewport.
 E.g. use it for lazy-loading images or fancy animation.
 
-Plain JS (no frameworks required ... except Vanilla JS). AMD or CommonJS ready.
+Plain JS (no frameworks required). AMD or CommonJS ready.
 
 ## Usage
 
@@ -53,8 +53,8 @@ ELEMENTs could be anything of type:
 
 **Shortcut**: If you only have a callback to pass you can simply pass the function instead of an object with the item `callback`.
 
-No matter what, the `option['class']` is set to the element once the peekaboo action is triggered,
-so you don't even need a `callback` to do awesome stuff. Just use `option['class']` in CSS.
+No matter what, the `options['class']` is set to the element once the peekaboo action is triggered,
+so you don't even need a `callback` to do awesome stuff. Just use `options['class']` in CSS.
 
 ```css
 /* by default class is 'peekaboo' */
