@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 - 2016-09-16
+**Fixed**
+
+* Get $elements as array glitch
+
 ## 1.0.1 - 2016-09-12
 **Changed/Fixed**
 

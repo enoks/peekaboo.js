@@ -1,5 +1,5 @@
 /**
- * peekaboo v1.0.1
+ * peekaboo v1.0.2
  * https://github.com/enoks/peekaboo.js
  *
  * Copyright 2016, Stefan Käsche
@@ -35,7 +35,7 @@
         if (!$elements) return;
 
         if (typeof $elements === 'string') $elements = document.querySelectorAll($elements);
-        else if (typeof $elements.length == 'undefined') $elements = [$elements];
+        else if ($elements instanceof HTMLElement) $elements = [$elements];
 
         if (!$elements.length) return;
 
