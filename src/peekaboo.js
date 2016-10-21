@@ -1,5 +1,5 @@
 /**
- * peekaboo v1.0.2
+ * peekaboo v1.0.3
  * https://github.com/enoks/peekaboo.js
  *
  * Copyright 2016, Stefan Käsche
@@ -99,13 +99,15 @@
 
             busy = true;
 
-            $elements.forEach(function($element, i) {
-                if ($element == undefined || $element.className.indexOf(oOptions['class']) >= 0) return;
+            // collect window's top and bottom
+            var wt = window.pageYOffset,
+                wb = wt + (Math.max(document.documentElement.clientHeight, window.innerHeight || 0));
 
-                // collect window's and element's top and bottom
-                var wt = window.pageYOffset,
-                    wb = wt + (Math.max(document.documentElement.clientHeight, window.innerHeight || 0)),
-                    et = $element.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop,
+            $elements.forEach(function($element, i) {
+                if (!$element) return delete $elements[i];
+
+                // collect element's top and bottom
+                var et = $element.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop,
                     eb = et + $element.clientHeight;
 
                 // check if element is in viewport
@@ -118,7 +120,18 @@
                 }
             });
 
-            busy = false;
+            if (($elements = $elements.filter(function($element) {
+                    return $element;
+                })) && !$elements.length) {
+                // well done ... bye
+                window.removeEventListener('load', peekaboo);
+                window.removeEventListener('scroll', peekaboo);
+                window.removeEventListener('resize', peekaboo);
+            }
+
+            setTimeout(function() {
+                busy = false;
+            }, 200);
         }
 
         // listen carefully my friend
