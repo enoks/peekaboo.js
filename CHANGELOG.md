@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0 - 2017-08-09
+**Added**
+
+* Check vertical position
+* loadInvisible option
+
 ## 1.0.3 - 2016-10-21
 **Fixed**
 

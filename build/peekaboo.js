@@ -1,5 +1,5 @@
 /**
- * peekaboo v1.0.3
+ * peekaboo v1.1.0
  * https://github.com/enoks/peekaboo.js
  *
  * Copyright 2016, Stefan Käsche
@@ -54,6 +54,7 @@
         // default options
         var oOptions = {
             threshold: 0,
+            loadInvisible: false,
             'class': 'peekaboo',
             callback: function(oOptions) {}
         };
@@ -63,27 +64,50 @@
             for (var option in oSettings) {
                 if (!oSettings.hasOwnProperty(option)) continue;
 
-                // check expected vs send option value type
-                switch (typeof oOptions[option]) {
-                    case 'undefined':
-                        // custom option ... just pass through
-                        break;
+                if (option == 'loadInvisible') {
+                    switch((oSettings[option] + '').toLowerCase()) {
+                        case 'true':
+                        case '1':
+                            oSettings[option] = true;
+                            break;
 
-                    default:
-                        // compare types
-                        if (typeof oOptions[option] !== typeof oSettings[option]) {
-                            console.debug("Passed value for option '" + option + "' (type of " + typeof oSettings[option] + ") doesn't match expected value type (" + typeof oOptions[option] + ").");
-                            continue;
-                        }
-                        break;
+                        case 'horizontal':
+                        case 'x':
+                            oSettings[option] = 'horizontal';
+                            break;
 
-                    case 'number':
-                        oSettings[option] = parseFloat(oSettings[option]);
-                        if (isNaN(oSettings[option])) {
-                            console.debug("Passed value for option '" + option + "' isn't of type number at all.");
+                        case 'vertical':
+                        case 'y':
+                            oSettings[option] = 'vertical';
+                            break;
+
+                        default:
                             continue;
-                        }
-                        break;
+                    }
+                }
+                else {
+                    // check expected vs send option value type
+                    switch (typeof oOptions[option]) {
+                        case 'undefined':
+                            // custom option ... just pass through
+                            break;
+
+                        default:
+                            // compare types
+                            if (typeof oOptions[option] !== typeof oSettings[option]) {
+                                console.debug("Passed value for option '" + option + "' (type of " + typeof oSettings[option] + ") doesn't match expected value type (" + typeof oOptions[option] + ").");
+                                continue;
+                            }
+                            break;
+
+                        case 'number':
+                            oSettings[option] = parseFloat(oSettings[option]);
+                            if (isNaN(oSettings[option])) {
+                                console.debug("Passed value for option '" + option + "' isn't of type number at all.");
+                                continue;
+                            }
+                            break;
+                    }
                 }
 
                 // override/extend oOptions
@@ -99,19 +123,27 @@
 
             busy = true;
 
-            // collect window's top and bottom
+            // collect window's top, bottom, left and right
             var wt = window.pageYOffset,
-                wb = wt + (Math.max(document.documentElement.clientHeight, window.innerHeight || 0));
+                wb = wt + (Math.max(document.documentElement.clientHeight, window.innerHeight || 0)),
+                wl = window.pageXOffset,
+                wr = wl + (Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
 
             $elements.forEach(function($element, i) {
                 if (!$element) return delete $elements[i];
 
-                // collect element's top and bottom
+                // collect element's top, bottom, left and right
                 var et = $element.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop,
-                    eb = et + $element.clientHeight;
+                    eb = et + $element.clientHeight,
+                    el = $element.getBoundingClientRect().left + window.pageXOffset - document.documentElement.clientLeft,
+                    er = el + $element.clientWidth;
 
                 // check if element is in viewport
-                if (eb >= wt - oOptions.threshold && et <= wb + oOptions.threshold) {
+                // or should be loaded anyway
+                if (oOptions.loadInvisible === true
+                    || ((oOptions.loadInvisible == 'vertical' || eb >= wt - oOptions.threshold && et <= wb + oOptions.threshold)
+                    && (oOptions.loadInvisible == 'horizontal' || er >= wl - oOptions.threshold && el <= wr + oOptions.threshold))
+                ) {
                     $element.className += ' ' + oOptions['class'];
                     oOptions.callback.call($element, oOptions);
 

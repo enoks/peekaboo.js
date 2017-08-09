@@ -47,6 +47,7 @@ ELEMENTs could be anything of type:
 |Option|Type|Description|Default|
 |------|----|-----------|-------|
 |threshold|integer or string|Threshold in px when callback should be called. Use a positive number to call before entering the viewport or a negative one to call when element is already in viewport.|0|
+|loadInvisible|boolean, integer or string|_Peekaboo_ elements although they are not in viewport yet. Possible values: `true`, `false`, `'vertical'` or `'horizontal'`|`false`
 |class|string|Classname the element gets once it's triggered _in viewport_.|peekaboo|
 |callback|function|Function to call on the _event_. The current element is binded to the function (`this`) and the object of options is passed as variable with it.|`function(options) {}`|
 ... or any custom option you want to pass.
@@ -66,6 +67,22 @@ so you don't even need a `callback` to do awesome stuff. Just use `options['clas
 .peekaboo {
     /* whatever should happen when in viewport */
 }
+```
+
+### Examples
+
+#### Lazy load images
+
+This is the simplest way to _lazy load_ your images and thereby decrease the browser requests and the page's load time.
+
+```html
+<img src="path/to/placeholder" data-src="path/to/actual/image" />
+
+<script type="text/javascript">
+    peekaboo('img[data-src]', function() {
+        this.src = this.getAttribute('data-src');
+    });
+</script>
 ```
 
 ## Questions, concerns, needs, suggestions?
