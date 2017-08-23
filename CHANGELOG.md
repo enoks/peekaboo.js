@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 - 2017-08-23
+**Fixed**
+
+* Don't add empty ```options['class']```.
+* Code style
+
 ## 1.1.0 - 2017-08-09
 **Added**
 
