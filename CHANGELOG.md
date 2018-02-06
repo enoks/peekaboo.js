@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2 - 2018-02-06
+**Changed**
+
+* JS beautify
+
 ## 1.1.1 - 2017-08-23
 **Fixed**
 

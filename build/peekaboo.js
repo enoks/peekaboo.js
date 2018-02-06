@@ -10,12 +10,12 @@
  */
 
 ;
-(function ( context, definition ) {
+( function( context, definition ) {
     'use strict';
 
     // AMD module
     if ( typeof define === 'function' && define.amd ) {
-        define( 'peekaboo', [], function () {
+        define( 'peekaboo', [], function() {
             return definition;
         } );
     } // CommonJS module
@@ -24,31 +24,33 @@
     } else {
         window.peekaboo = definition;
     }
-})( this, function ( undefined ) {
+} )( this, function( undefined ) {
     "use strict";
 
     /**
      * @param string|NodeList|HTMLCollection|HTML...Element $elements
      * @param object|function oSettings
      */
-    return function ( $elements, oSettings ) {
+    return function( $elements, oSettings ) {
         if ( !$elements ) return;
 
         if ( typeof $elements === 'string' ) $elements = document.querySelectorAll( $elements );
-        else if ( $elements instanceof HTMLElement ) $elements = [$elements];
+        else if ( $elements instanceof HTMLElement ) $elements = [ $elements ];
 
         if ( !$elements.length ) return;
 
         // make sure to have an array
         var arrayOfElements = [];
         for ( var i = 0; i < $elements.length; i++ ) {
-            arrayOfElements.push( $elements[i] );
+            arrayOfElements.push( $elements[ i ] );
         }
         $elements = arrayOfElements;
 
         // callback shortcut
         if ( typeof oSettings === 'function' ) {
-            oSettings = { callback: oSettings };
+            oSettings = {
+                callback: oSettings
+            };
         }
 
         // default options
@@ -56,8 +58,7 @@
             threshold: 0,
             loadInvisible: false,
             'class': 'peekaboo',
-            callback: function ( oOptions ) {
-            }
+            callback: function( oOptions ) {}
         };
 
         // merge options aka settings
@@ -66,20 +67,20 @@
                 if ( !oSettings.hasOwnProperty( option ) ) continue;
 
                 if ( option == 'loadInvisible' ) {
-                    switch ( (oSettings[option] + '').toLowerCase() ) {
+                    switch ( ( oSettings[ option ] + '' ).toLowerCase() ) {
                         case 'true':
                         case '1':
-                            oSettings[option] = true;
+                            oSettings[ option ] = true;
                             break;
 
                         case 'horizontal':
                         case 'x':
-                            oSettings[option] = 'horizontal';
+                            oSettings[ option ] = 'horizontal';
                             break;
 
                         case 'vertical':
                         case 'y':
-                            oSettings[option] = 'vertical';
+                            oSettings[ option ] = 'vertical';
                             break;
 
                         default:
@@ -87,22 +88,22 @@
                     }
                 }
                 // check expected vs send option value type
-                else switch ( typeof oOptions[option] ) {
+                else switch ( typeof oOptions[ option ] ) {
                     case 'undefined':
                         // custom option ... just pass through
                         break;
 
                     default:
                         // compare types
-                        if ( typeof oOptions[option] !== typeof oSettings[option] ) {
-                            console.debug( "Passed value for option '" + option + "' (type of " + typeof oSettings[option] + ") doesn't match expected value type (" + typeof oOptions[option] + ")." );
+                        if ( typeof oOptions[ option ] !== typeof oSettings[ option ] ) {
+                            console.debug( "Passed value for option '" + option + "' (type of " + typeof oSettings[ option ] + ") doesn't match expected value type (" + typeof oOptions[ option ] + ")." );
                             continue;
                         }
                         break;
 
                     case 'number':
-                        oSettings[option] = parseFloat( oSettings[option] );
-                        if ( isNaN( oSettings[option] ) ) {
+                        oSettings[ option ] = parseFloat( oSettings[ option ] );
+                        if ( isNaN( oSettings[ option ] ) ) {
                             console.debug( "Passed value for option '" + option + "' isn't of type number at all." );
                             continue;
                         }
@@ -110,7 +111,7 @@
                 }
 
                 // override/extend oOptions
-                oOptions[option] = oSettings[option];
+                oOptions[ option ] = oSettings[ option ];
             }
         }
 
@@ -124,12 +125,12 @@
 
             // collect window's top, bottom, left and right
             var wt = window.pageYOffset,
-                wb = wt + (Math.max( document.documentElement.clientHeight, window.innerHeight || 0 )),
+                wb = wt + ( Math.max( document.documentElement.clientHeight, window.innerHeight || 0 ) ),
                 wl = window.pageXOffset,
-                wr = wl + (Math.max( document.documentElement.clientWidth, window.innerWidth || 0 ));
+                wr = wl + ( Math.max( document.documentElement.clientWidth, window.innerWidth || 0 ) );
 
-            $elements.forEach( function ( $element, i ) {
-                if ( !$element ) return delete $elements[i];
+            $elements.forEach( function( $element, i ) {
+                if ( !$element ) return delete $elements[ i ];
 
                 // collect element's top, bottom, left and right
                 var et = $element.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop,
@@ -139,28 +140,28 @@
 
                 // check if element is in viewport
                 // or should be loaded anyway
-                if ( oOptions.loadInvisible === true
-                    || ((oOptions.loadInvisible == 'vertical' || eb >= wt - oOptions.threshold && et <= wb + oOptions.threshold)
-                    && (oOptions.loadInvisible == 'horizontal' || er >= wl - oOptions.threshold && el <= wr + oOptions.threshold))
+                if ( oOptions.loadInvisible === true ||
+                    ( ( oOptions.loadInvisible == 'vertical' || eb >= wt - oOptions.threshold && et <= wb + oOptions.threshold ) &&
+                        ( oOptions.loadInvisible == 'horizontal' || er >= wl - oOptions.threshold && el <= wr + oOptions.threshold ) )
                 ) {
-                    if ( oOptions['class'] ) $element.className += ' ' + oOptions['class'];
+                    if ( oOptions[ 'class' ] ) $element.className += ' ' + oOptions[ 'class' ];
                     oOptions.callback.call( $element, oOptions );
 
                     // don't need this anymore
-                    delete $elements[i];
+                    delete $elements[ i ];
                 }
             } );
 
-            if ( ($elements = $elements.filter( function ( $element ) {
+            if ( ( $elements = $elements.filter( function( $element ) {
                     return $element;
-                } )) && !$elements.length ) {
+                } ) ) && !$elements.length ) {
                 // well done ... bye
                 window.removeEventListener( 'load', peekaboo );
                 window.removeEventListener( 'scroll', peekaboo );
                 window.removeEventListener( 'resize', peekaboo );
             }
 
-            setTimeout( function () {
+            setTimeout( function() {
                 busy = false;
             }, 200 );
         }
