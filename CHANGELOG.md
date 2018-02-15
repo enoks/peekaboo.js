@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.3 - 2018-02-15
+**Fixed**
+
+* Multiple calls ... single listeners.
+
 ## 1.1.2 - 2018-02-06
 **Changed**
 

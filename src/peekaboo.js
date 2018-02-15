@@ -1,5 +1,5 @@
 /**
- * peekaboo v1.1.1
+ * peekaboo v1.1.2
  * https://github.com/enoks/peekaboo.js
  *
  * Copyright 2017, Stefan Käsche
@@ -24,8 +24,68 @@
     } else {
         window.peekaboo = definition;
     }
-})( this, function ( undefined ) {
+})( this, function () {
     "use strict";
+
+    var jobs = [], // array of all calls
+        busy = false; // be patient
+
+    // check jobs
+    function peekaboo( i ) {
+        if ( !jobs.length || busy ) return;
+        busy = true;
+
+        // collect window's top, bottom, left and right
+        var wt = window.pageYOffset,
+            wb = wt + (Math.max( document.documentElement.clientHeight, window.innerHeight || 0 )),
+            wl = window.pageXOffset,
+            wr = wl + (Math.max( document.documentElement.clientWidth, window.innerWidth || 0 ));
+
+        // loop through jobs
+        jobs.forEach( function ( job, j ) {
+            // specific job is requested (on init of job)
+            if ( typeof i === 'number' && i !== j ) return;
+
+            // loop through job elements
+            job.$.forEach( function ( $element, i ) {
+                if ( !$element ) return delete job.$[i];
+
+                // collect element's top, bottom, left and right
+                var et = $element.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop,
+                    eb = et + $element.clientHeight,
+                    el = $element.getBoundingClientRect().left + window.pageXOffset - document.documentElement.clientLeft,
+                    er = el + $element.clientWidth;
+
+                // check if element is in viewport
+                // or should be loaded anyway
+                if ( job.options.loadInvisible === true
+                    || ((job.options.loadInvisible == 'vertical' || eb >= wt - job.options.threshold && et <= wb + job.options.threshold)
+                        && (job.options.loadInvisible == 'horizontal' || er >= wl - job.options.threshold && el <= wr + job.options.threshold))
+                ) {
+                    if ( job.options['class'] && $element.className.indexOf( job.options['class'] ) < 0 ) $element.className += ' ' + job.options['class'];
+                    job.options.callback.call( $element, job.options );
+
+                    // don't need this anymore
+                    delete job.$[i];
+                }
+            } );
+
+            // clean jobs from completed ones
+            if ( (job.$ = job.$.filter( function ( $element ) {
+                    return $element;
+                } )) && !job.$.length )
+                jobs.splice( i, 1 );
+        } );
+
+        setTimeout( function () {
+            busy = false;
+        }, 200 );
+    }
+
+    // listen carefully my friend
+    window.addEventListener( 'load', peekaboo );
+    window.addEventListener( 'scroll', peekaboo );
+    window.addEventListener( 'resize', peekaboo );
 
     /**
      * @param string|NodeList|HTMLCollection|HTML...Element $elements
@@ -40,11 +100,7 @@
         if ( !$elements.length ) return;
 
         // make sure to have an array
-        var arrayOfElements = [];
-        for ( var i = 0; i < $elements.length; i++ ) {
-            arrayOfElements.push( $elements[i] );
-        }
-        $elements = arrayOfElements;
+        $elements = Array.prototype.slice.call( $elements );
 
         // callback shortcut
         if ( typeof oSettings === 'function' ) {
@@ -114,64 +170,13 @@
             }
         }
 
-        // be patient
-        var busy = false;
-
-        function peekaboo() {
-            if ( busy || !$elements.length ) return;
-
-            busy = true;
-
-            // collect window's top, bottom, left and right
-            var wt = window.pageYOffset,
-                wb = wt + (Math.max( document.documentElement.clientHeight, window.innerHeight || 0 )),
-                wl = window.pageXOffset,
-                wr = wl + (Math.max( document.documentElement.clientWidth, window.innerWidth || 0 ));
-
-            $elements.forEach( function ( $element, i ) {
-                if ( !$element ) return delete $elements[i];
-
-                // collect element's top, bottom, left and right
-                var et = $element.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop,
-                    eb = et + $element.clientHeight,
-                    el = $element.getBoundingClientRect().left + window.pageXOffset - document.documentElement.clientLeft,
-                    er = el + $element.clientWidth;
-
-                // check if element is in viewport
-                // or should be loaded anyway
-                if ( oOptions.loadInvisible === true
-                    || ((oOptions.loadInvisible == 'vertical' || eb >= wt - oOptions.threshold && et <= wb + oOptions.threshold)
-                    && (oOptions.loadInvisible == 'horizontal' || er >= wl - oOptions.threshold && el <= wr + oOptions.threshold))
-                ) {
-                    if ( oOptions['class'] ) $element.className += ' ' + oOptions['class'];
-                    oOptions.callback.call( $element, oOptions );
-
-                    // don't need this anymore
-                    delete $elements[i];
-                }
-            } );
-
-            if ( ($elements = $elements.filter( function ( $element ) {
-                    return $element;
-                } )) && !$elements.length ) {
-                // well done ... bye
-                window.removeEventListener( 'load', peekaboo );
-                window.removeEventListener( 'scroll', peekaboo );
-                window.removeEventListener( 'resize', peekaboo );
-            }
-
-            setTimeout( function () {
-                busy = false;
-            }, 200 );
-        }
-
-        // listen carefully my friend
-        window.addEventListener( 'load', peekaboo );
-        window.addEventListener( 'scroll', peekaboo );
-        window.addEventListener( 'resize', peekaboo );
+        jobs.push( {
+            $: $elements,
+            options: oOptions
+        } );
 
         // initial call
-        peekaboo();
+        peekaboo( jobs.length - 1 );
     };
 
 }() );
