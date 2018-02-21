@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.4 - 2018-02-21
+**Fixed**
+
+* Job cleaner.
+
+**Changed**
+
+* GNU to MIT
+
 ## 1.1.3 - 2018-02-15
 **Fixed**
 
@@ -14,7 +23,7 @@
 **Fixed**
 
 * Don't add empty ```options['class']```.
-* Code style
+* Code style.
 
 ## 1.1.0 - 2017-08-09
 **Added**

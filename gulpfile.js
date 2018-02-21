@@ -3,8 +3,8 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
 
-    source = ['src/**/*.js'],
-    destination = './build/';
+    source = ['peekaboo.js'],
+    destination = './dist/';
 
 gulp.task('js', function () {
     gulp.src(source)
