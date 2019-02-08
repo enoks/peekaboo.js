@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0 - 2019-01-08
+**Changed**
+
+* Use requestAnimationFrame (if possible).
+
 ## 1.1.4 - 2018-02-21
 **Fixed**
 

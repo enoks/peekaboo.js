@@ -1,8 +1,8 @@
 /**
- * peekaboo v1.1.4
+ * peekaboo v1.2.0
  * https://github.com/enoks/peekaboo.js
  *
- * Copyright 2018, Stefan Käsche
+ * Copyright 2019, Stefan Käsche
  * https://github.com/enoks
  *
  * Licensed under MIT
@@ -32,8 +32,14 @@
 
     // check jobs
     function peekaboo( i ) {
-        if ( !jobs.length || busy ) return;
-        busy = true;
+        // no jobs ... nothing to do
+        if ( !jobs.length ) return;
+
+        if ( !busy ) {
+            // using window's requestAnimationFrame for throttle/debounce
+            if ( !!window.requestAnimationFrame ) return busy = window.requestAnimationFrame( peekaboo.bind( peekaboo, i ) );
+            else busy = true;
+        } else if ( !window.requestAnimationFrame ) return;
 
         // collect window's top, bottom, left and right
         var wt = window.pageYOffset,
@@ -84,10 +90,11 @@
             return job.$.length;
         } );
 
-        // keep calm
-        setTimeout( function() {
+        // release the function again
+        if ( typeof busy == 'boolean' ) setTimeout( function() {
             busy = false;
-        }, 100 );
+        }, 16 );
+        else busy = false;
     }
 
     // listen carefully my friend

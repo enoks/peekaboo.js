@@ -1,9 +1,9 @@
 {
   "name": "peekaboo.js",
   "description": "Do something with everything when it's in viewport.",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "main": "peekaboo.js",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/enoks/peekaboo.js"
