@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 - 2019-03-07
+**Changed**
+
+* Use event listeners options (if possible).
+
 ## 1.2.0 - 2019-01-08
 **Changed**
 

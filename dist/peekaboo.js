@@ -1,5 +1,5 @@
 /**
- * peekaboo v1.2.0
+ * peekaboo v1.2.1
  * https://github.com/enoks/peekaboo.js
  *
  * Copyright 2019, Stefan Käsche
@@ -97,10 +97,28 @@
         else busy = false;
     }
 
+    var supportsEventOptions = false;
+    // determines if event listeners support options instead of only boolean (useCapture)
+    // @link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+    try {
+        window.addEventListener( 'test', null, Object.defineProperty( {}, 'passive', {
+            get: function() {
+                supportsEventOptions = true;
+            }
+        } ) );
+    } catch ( err ) {}
+
     // listen carefully my friend
-    window.addEventListener( 'load', peekaboo );
-    window.addEventListener( 'scroll', peekaboo );
-    window.addEventListener( 'resize', peekaboo );
+    window.addEventListener( 'load', peekaboo, supportsEventOptions ? {
+        once: true,
+        passive: true
+    } : false );
+    window.addEventListener( 'scroll', peekaboo, supportsEventOptions ? {
+        passive: true
+    } : false );
+    window.addEventListener( 'resize', peekaboo, supportsEventOptions ? {
+        passive: true
+    } : false );
 
     /**
      * @param string|NodeList|HTMLCollection|HTML...Element $elements
