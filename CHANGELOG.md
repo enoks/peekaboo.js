@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 - 2021-10-06
+**Added**
+
+* Make sure threshold results in a _possible space_.
+
 ## 1.2.1 - 2019-03-07
 **Changed**
 

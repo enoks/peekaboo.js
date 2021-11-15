@@ -1,8 +1,8 @@
 /**
- * peekaboo v1.2.1
+ * peekaboo v1.2.2
  * https://github.com/enoks/peekaboo.js
  *
- * Copyright 2019, Stefan Käsche
+ * Copyright 2021, Stefan Käsche
  * https://github.com/enoks
  *
  * Licensed under MIT
@@ -24,7 +24,7 @@
     } else {
         context.peekaboo = definition;
     }
-} )( this, function() {
+} )( window, function() {
     "use strict";
 
     var jobs = [], // array of all peekaboo() calls
@@ -39,8 +39,7 @@
             // using window's requestAnimationFrame for throttle/debounce
             if ( !!window.requestAnimationFrame ) return busy = window.requestAnimationFrame( peekaboo.bind( peekaboo, i ) );
             else busy = true;
-        }
-        else if ( !window.requestAnimationFrame ) return;
+        } else if ( !window.requestAnimationFrame ) return;
 
         // collect window's top, bottom, left and right
         var wt = window.pageYOffset,
@@ -62,6 +61,10 @@
                     eb = et + $element.clientHeight,
                     el = $element.getBoundingClientRect().left + window.pageXOffset - document.documentElement.clientLeft,
                     er = el + $element.clientWidth;
+
+                // make sure threshold results in a _possible space_
+                if ( wt - job.options.threshold > wb + job.options.threshold )
+                    job.options.threshold += (wt - job.options.threshold - (wb + job.options.threshold)) / 2
 
                 // check if element is in viewport
                 // ... or should be loaded anyway
@@ -101,13 +104,25 @@
     var supportsEventOptions = false;
     // determines if event listeners support options instead of only boolean (useCapture)
     // @link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
-    try { window.addEventListener('test', null, Object.defineProperty({}, 'passive', { get: function() { supportsEventOptions = true; } }));
-    } catch(err) {}
+    try {
+        window.addEventListener( 'test', null, Object.defineProperty( {}, 'passive', {
+            get: function() {
+                supportsEventOptions = true;
+            }
+        } ) );
+    } catch ( err ) {}
 
     // listen carefully my friend
-    window.addEventListener( 'load', peekaboo, supportsEventOptions ? {once: true, passive: true} : false );
-    window.addEventListener( 'scroll', peekaboo, supportsEventOptions ? {passive: true} : false );
-    window.addEventListener( 'resize', peekaboo, supportsEventOptions ? {passive: true} : false );
+    window.addEventListener( 'load', peekaboo, supportsEventOptions ? {
+        once: true,
+        passive: true
+    } : false );
+    window.addEventListener( 'scroll', peekaboo, supportsEventOptions ? {
+        passive: true
+    } : false );
+    window.addEventListener( 'resize', peekaboo, supportsEventOptions ? {
+        passive: true
+    } : false );
 
     /**
      * @param string|NodeList|HTMLCollection|HTML...Element $elements

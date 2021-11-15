@@ -1,8 +1,8 @@
 /**
- * peekaboo v1.2.1
+ * peekaboo v1.2.2
  * https://github.com/enoks/peekaboo.js
  *
- * Copyright 2019, Stefan Käsche
+ * Copyright 2021, Stefan Käsche
  * https://github.com/enoks
  *
  * Licensed under MIT
@@ -24,7 +24,7 @@
     } else {
         context.peekaboo = definition;
     }
-} )( this, function() {
+} )( window, function() {
     "use strict";
 
     var jobs = [], // array of all peekaboo() calls
@@ -61,6 +61,10 @@
                     eb = et + $element.clientHeight,
                     el = $element.getBoundingClientRect().left + window.pageXOffset - document.documentElement.clientLeft,
                     er = el + $element.clientWidth;
+
+                // make sure threshold results in a _possible space_
+                if ( wt - job.options.threshold > wb + job.options.threshold )
+                    job.options.threshold += ( wt - job.options.threshold - ( wb + job.options.threshold ) ) / 2
 
                 // check if element is in viewport
                 // ... or should be loaded anyway
